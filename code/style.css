@@ -1,0 +1,25 @@
+body {
+  font-family: system-ui, sans-serif;
+  max-width: 40rem;
+  margin: 1.5rem auto;
+  padding: 0 1rem;
+}
+
+form {
+  margin-bottom: 1.5rem;
+}
+
+label {
+  display: block;
+  margin-bottom: 0.35rem;
+}
+
+input[type="text"] {
+  width: 100%;
+  max-width: 20rem;
+  padding: 0.35rem 0.5rem;
+}
+
+ul {
+  padding-left: 1.25rem;
+}
