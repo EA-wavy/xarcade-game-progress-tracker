@@ -1,1 +1,2 @@
 # Xarcade Game Progress 
+This web application allows users to create a personal game catalogue, track their completion progress, and organise their library by status such as currently playing, completed, or backlog. It runs in the browser for simple and universal access. To run locally click on the index file 
