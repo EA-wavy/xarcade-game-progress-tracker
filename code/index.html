@@ -10,14 +10,31 @@
   <h1>XArcade</h1>
 
   <form id="add-form">
-    <label>
-      Game title
-      <input type="text" id="title" name="title" required />
-    </label>
-    <button type="submit">Add</button>
+    <div class="row">
+      <label>
+        Game title
+        <input type="text" id="title" required />
+      </label>
+
+      <label>
+        Status
+        <select id="status">
+          <option value="playing">Playing</option>
+          <option value="done">Done</option>
+        </select>
+      </label>
+
+      <label>
+        Completion % 
+        <input type="number" id="percent" min="0" max="100" />
+      </label>
+
+      <button type="submit">Add Game</button>
+    </div>
   </form>
 
   <h2>Games</h2>
+  <p id="empty" class="muted">No games yet.</p>
   <ul id="game-list"></ul>
 
   <script src="app.js"></script>

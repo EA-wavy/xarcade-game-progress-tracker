@@ -1,28 +1,52 @@
 (function () {
   "use strict";
 
-  /** @type {string[]} */
+  /** @type {{ title: string, status: string, percent: number | null }[]} */
   var games = [];
 
   var form = document.getElementById("add-form");
-  var titleInput = document.getElementById("title");
+  var titleEl = document.getElementById("title");
+  var statusEl = document.getElementById("status");
+  var percentEl = document.getElementById("percent");
   var listEl = document.getElementById("game-list");
+  var emptyEl = document.getElementById("empty");
 
   function render() {
     listEl.innerHTML = "";
+    emptyEl.style.display = games.length ? "none" : "block";
+
     for (var i = 0; i < games.length; i++) {
+      var g = games[i];
       var li = document.createElement("li");
-      li.textContent = games[i];
+      var pctText = g.percent === null ? "" : " | " + g.percent + "%";
+      li.textContent = g.title + " | " + g.status + pctText;
       listEl.appendChild(li);
     }
   }
 
   form.addEventListener("submit", function (e) {
     e.preventDefault();
-    var title = titleInput.value.trim();
+
+    var title = titleEl.value.trim();
     if (!title) return;
-    games.push(title);
-    titleInput.value = "";
+
+    var pctRaw = percentEl.value.trim();
+    var pct = null;
+    if (pctRaw !== "") {
+      var n = Number(pctRaw);
+      if (!Number.isFinite(n)) return;
+      pct = Math.max(0, Math.min(100, Math.round(n)));
+    }
+
+    games.push({
+      title: title,
+      status: statusEl.value,
+      percent: pct
+    });
+
+    titleEl.value = "";
+    statusEl.value = "backlog";
+    percentEl.value = "";
     render();
   });
 
