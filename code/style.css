@@ -54,6 +54,66 @@ li {
   margin: 0.45rem 0;
 }
 
+.game-item-text {
+  display: inline-block;
+  margin-right: 0.5rem;
+  font-weight: 600;
+}
+
+.game-actions {
+  display: inline-flex;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+  margin-top: 0.4rem;
+}
+
+button {
+  cursor: pointer;
+}
+
+.btn-secondary {
+  background: #eef3ff;
+  border: 1px solid #cdd8ff;
+  border-radius: 6px;
+}
+
+.btn-danger {
+  background: #ffe9e9;
+  border: 1px solid #ffb3b3;
+  border-radius: 6px;
+}
+
+.btn-save {
+  background: #e9ffe9;
+  border: 1px solid #9ef0a4;
+  border-radius: 6px;
+}
+
+.edit-fields {
+  display: grid;
+  gap: 0.5rem;
+  margin-top: 0.35rem;
+}
+
+@media (min-width: 720px) {
+  .edit-fields {
+    grid-template-columns: 2fr 1fr 1fr auto;
+    align-items: end;
+  }
+}
+
+.edit-fields input[type="text"] {
+  width: 100%;
+}
+
+.edit-fields input[type="number"] {
+  width: 100%;
+}
+
+.edit-fields select {
+  width: 100%;
+}
+
 .muted {
   color: #555;
   font-size: 0.9rem;
