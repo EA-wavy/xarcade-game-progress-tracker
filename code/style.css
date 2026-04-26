@@ -114,7 +114,18 @@ button {
   width: 100%;
 }
 
+.error-text {
+  color: #b00020;
+  font-size: 0.9rem;
+  margin: 0.2rem 0 0;
+  font-weight: 600;
+}
+
 .muted {
   color: #555;
   font-size: 0.9rem;
+}
+
+#status-filter {
+  max-width: 14rem;
 }
