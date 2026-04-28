@@ -28,7 +28,7 @@ form {
 
 @media (min-width: 720px) {
   .row {
-    grid-template-columns: 2fr 1fr 1fr auto;
+    grid-template-columns: 2fr 1fr 1fr 1fr auto;
     align-items: end;
   }
 }
@@ -97,7 +97,7 @@ button {
 
 @media (min-width: 720px) {
   .edit-fields {
-    grid-template-columns: 2fr 1fr 1fr auto;
+    grid-template-columns: 2fr 1fr 1fr 1fr auto;
     align-items: end;
   }
 }
@@ -128,4 +128,12 @@ button {
 
 #status-filter {
   max-width: 14rem;
+}
+
+.genre-heading {
+  list-style: none;
+  font-weight: 700;
+  margin-top: 0.9rem;
+  border-bottom: 1px solid #d9def0;
+  padding-bottom: 0.25rem;
 }

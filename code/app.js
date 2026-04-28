@@ -10,8 +10,10 @@
   var playingOptionEl = statusEl.querySelector('option[value="playing"]');
   var doneOptionEl = statusEl.querySelector('option[value="done"]');
   var percentEl = document.getElementById("percent");
+  var genreEl = document.getElementById("genre");
   var formErrorEl = document.getElementById("form-error");
   var statusFilterEl = document.getElementById("status-filter");
+  var sortByEl = document.getElementById("sort-by");
   var listEl = document.getElementById("game-list");
   var emptyEl = document.getElementById("empty");
 
@@ -84,6 +86,43 @@
     return game.percent === null ? 0 : game.percent;
   }
 
+  function getCreatedAt(game) {
+    if (typeof game.createdAt === "number") return game.createdAt;
+    var idText = String(game.id || "");
+    var firstPart = Number(idText.split("-")[0]);
+    if (Number.isFinite(firstPart)) return firstPart;
+    return 0;
+  }
+
+  function compareGames(a, b) {
+    var sortBy = sortByEl.value;
+
+    if (sortBy === "title-asc") {
+      return a.title.localeCompare(b.title, undefined, { sensitivity: "base" });
+    }
+    if (sortBy === "title-desc") {
+      return b.title.localeCompare(a.title, undefined, { sensitivity: "base" });
+    }
+    if (sortBy === "status") {
+      var statusRank = { playing: 0, done: 1 };
+      var diff = statusRank[a.status] - statusRank[b.status];
+      if (diff !== 0) return diff;
+      return a.title.localeCompare(b.title, undefined, { sensitivity: "base" });
+    }
+
+    // Default: newest first
+    return getCreatedAt(b) - getCreatedAt(a);
+  }
+
+  function getGenreLabel(genreValue) {
+    if (genreValue === "action") return "Action";
+    if (genreValue === "adventure") return "Adventure";
+    if (genreValue === "rpg") return "RPG";
+    if (genreValue === "sports") return "Sports";
+    if (genreValue === "strategy") return "Strategy";
+    return "Other";
+  }
+
   function getVisibleGames() {
     var filtered = [];
     var selectedStatus = statusFilterEl.value;
@@ -94,12 +133,6 @@
       }
     }
 
-    filtered.sort(function (a, b) {
-      var completionDiff = completionForSort(a) - completionForSort(b);
-      if (completionDiff !== 0) return completionDiff;
-      return a.title.localeCompare(b.title);
-    });
-
     return filtered;
   }
 
@@ -108,8 +141,33 @@
     var visibleGames = getVisibleGames();
     emptyEl.style.display = visibleGames.length ? "none" : "block";
 
+    var gamesByGenre = {};
     for (var i = 0; i < visibleGames.length; i++) {
-      var g = visibleGames[i];
+      var genreKey = visibleGames[i].genre || "other";
+      if (!gamesByGenre[genreKey]) {
+        gamesByGenre[genreKey] = [];
+      }
+      gamesByGenre[genreKey].push(visibleGames[i]);
+    }
+
+    var genreOrder = ["action", "adventure", "rpg", "sports", "strategy", "other"];
+
+    for (var gIndex = 0; gIndex < genreOrder.length; gIndex++) {
+      var currentGenre = genreOrder[gIndex];
+      if (!gamesByGenre[currentGenre] || gamesByGenre[currentGenre].length === 0) {
+        continue;
+      }
+
+      var headingLi = document.createElement("li");
+      headingLi.className = "genre-heading";
+      headingLi.textContent = getGenreLabel(currentGenre);
+      listEl.appendChild(headingLi);
+
+      var gamesInGenre = gamesByGenre[currentGenre];
+      gamesInGenre.sort(compareGames);
+
+      for (var j = 0; j < gamesInGenre.length; j++) {
+      var g = gamesInGenre[j];
       let thisId = g.id;
       var li = document.createElement("li");
 
@@ -141,6 +199,16 @@
         percentInput.placeholder = "";
         percentInput.value = g.percent === null ? "" : String(g.percent);
 
+        var genreSelect = document.createElement("select");
+        var genreOptions = ["action", "adventure", "rpg", "sports", "strategy", "other"];
+        for (var optionIndex = 0; optionIndex < genreOptions.length; optionIndex++) {
+          var genreOption = document.createElement("option");
+          genreOption.value = genreOptions[optionIndex];
+          genreOption.textContent = getGenreLabel(genreOptions[optionIndex]);
+          genreSelect.appendChild(genreOption);
+        }
+        genreSelect.value = g.genre || "other";
+
         var saveBtn = document.createElement("button");
         saveBtn.type = "button";
         saveBtn.className = "btn-save";
@@ -165,6 +233,7 @@
         editFields.appendChild(titleInput);
         editFields.appendChild(statusSelect);
         editFields.appendChild(percentInput);
+        editFields.appendChild(genreSelect);
         editFields.appendChild(actions);
         editFields.appendChild(editError);
 
@@ -213,6 +282,7 @@
               games[j].title = newTitle;
               games[j].status = newStatus;
               games[j].percent = newPercent;
+              games[j].genre = genreSelect.value;
               break;
             }
           }
@@ -239,7 +309,7 @@
       var pctText = g.percent === null ? "" : " | " + g.percent + "%";
       var text = document.createElement("span");
       text.className = "game-item-text";
-      text.textContent = g.title + " | " + g.status + pctText;
+      text.textContent = g.title + " | " + g.status + pctText + " | " + getGenreLabel(g.genre || "other");
       li.appendChild(text);
 
       var actionsRow = document.createElement("div");
@@ -265,6 +335,7 @@
       actionsRow.appendChild(deleteBtn);
       li.appendChild(actionsRow);
       listEl.appendChild(li);
+      }
     }
   }
 
@@ -314,18 +385,23 @@
       games[existingIndex].title = title;
       games[existingIndex].status = statusEl.value;
       games[existingIndex].percent = pct;
+      games[existingIndex].genre = genreEl.value;
+      games[existingIndex].createdAt = Date.now();
     } else {
       games.push({
         id: makeId(),
         title: title,
         status: statusEl.value,
-        percent: pct
+        percent: pct,
+        genre: genreEl.value,
+        createdAt: Date.now()
       });
     }
 
     titleEl.value = "";
     statusEl.value = "playing";
     percentEl.value = "";
+    genreEl.value = "action";
     updateStatusAvailability();
     render();
   });
@@ -341,6 +417,10 @@
   });
 
   statusFilterEl.addEventListener("change", function () {
+    render();
+  });
+
+  sortByEl.addEventListener("change", function () {
     render();
   });
 
