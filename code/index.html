@@ -7,66 +7,140 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <h1>XArcade</h1>
 
-  <form id="add-form">
-    <div class="row">
-      <label>
-        Game title
-        <input type="text" id="title" required />
-      </label>
-
-      <label>
-        Status
-        <select id="status">
-          <option value="playing">Playing</option>
-          <option value="done">Done</option>
-        </select>
-      </label>
-
-      <label>
-        Completion % (optional)
-        <input type="number" id="percent" min="0" max="100" />
-      </label>
-
-      <label>
-        Genre
-        <select id="genre">
-          <option value="action">Action</option>
-          <option value="adventure">Adventure</option>
-          <option value="rpg">RPG</option>
-          <option value="sports">Sports</option>
-          <option value="strategy">Strategy</option>
-          <option value="other">Other</option>
-        </select>
-      </label>
-
-      <button type="submit">Add Game</button>
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <span class="logo-x">✕</span>ARCADE
     </div>
-    <p id="form-error" class="error-text" aria-live="polite"></p>
-  </form>
+    <nav class="sidebar-nav">
+      <button class="nav-item" id="nav-dashboard" onclick="showPage('dashboard')">
+        <span class="nav-icon">⊞</span> Dashboard
+      </button>
+      <button class="nav-item" id="nav-games" onclick="showPage('games')">
+        <span class="nav-icon">◎</span> My Games
+      </button>
+      <button class="nav-item" id="nav-add" onclick="showPage('add')">
+        <span class="nav-icon">＋</span> Add Game
+      </button>
+    </nav>
+  </aside>
 
-  <h2>Games</h2>
-  <label>
-    Filter
-    <select id="status-filter">
-      <option value="all">All</option>
-      <option value="playing">Playing</option>
-      <option value="done">Done</option>
-    </select>
-  </label>
-  <label>
-    Sort
-    <select id="sort-by">
-      <option value="newest">Newest</option>
-      <option value="title-asc">Title (A-Z)</option>
-      <option value="title-desc">Title (Z-A)</option>
-      <option value="status">Status</option>
-    </select>
-  </label>
-  <p id="empty" class="muted">No games yet.</p>
-  <ul id="game-list"></ul>
+  <!-- Main content -->
+  <main class="main-content">
+
+    <!-- DASHBOARD PAGE -->
+    <div id="page-dashboard" class="page">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Welcome back, Player!</h1>
+          <p class="page-subtitle">Track your progress. Beat more games.</p>
+        </div>
+        <button class="btn-primary" onclick="showPage('add')">&#xFF0B; Add Game</button>
+      </div>
+      <h2 class="section-title">Recently Added</h2>
+      <p id="dashboard-empty" class="muted">No games yet. Add your first game!</p>
+      <ul id="dashboard-list" class="dashboard-game-list"></ul>
+    </div>
+
+    <!-- MY GAMES PAGE -->
+    <div id="page-games" class="page hidden">
+      <div class="page-header">
+        <h1 class="page-title">My Games</h1>
+        <button class="btn-primary" onclick="showPage('add')">&#xFF0B; Add Game</button>
+      </div>
+      <div class="games-controls">
+        <div class="filter-row">
+          <label class="control-label">
+            Filter
+            <select id="status-filter">
+              <option value="all">All</option>
+              <option value="playing">Playing</option>
+              <option value="done">Done</option>
+            </select>
+          </label>
+          <label class="control-label">
+            Sort
+            <select id="sort-by">
+              <option value="newest">Newest</option>
+              <option value="title-asc">Title (A-Z)</option>
+              <option value="title-desc">Title (Z-A)</option>
+              <option value="status">Status</option>
+            </select>
+          </label>
+        </div>
+      </div>
+      <p id="empty" class="muted">No games yet.</p>
+      <ul id="game-list" class="game-table"></ul>
+    </div>
+
+    <!-- ADD GAME PAGE -->
+    <div id="page-add" class="page hidden">
+      <div class="page-header-simple">
+        <h1 class="page-title">Add New Game</h1>
+        <p class="page-subtitle">Add a game to your catalogue</p>
+      </div>
+      <div class="add-card">
+        <form id="add-form">
+          <div class="form-grid">
+            <label class="form-label">
+              Title *
+              <input type="text" id="title" placeholder="Enter game title" required />
+            </label>
+            <label class="form-label">
+              Genre
+              <select id="genre">
+                <option value="action">Action</option>
+                <option value="adventure">Adventure</option>
+                <option value="rpg">RPG</option>
+                <option value="sports">Sports</option>
+                <option value="strategy">Strategy</option>
+                <option value="other">Other</option>
+              </select>
+            </label>
+            <label class="form-label">
+              Status
+              <select id="status">
+                <option value="playing">Playing</option>
+                <option value="done">Done</option>
+              </select>
+            </label>
+            <label class="form-label">
+              Progress (%)
+              <input type="number" id="percent" min="0" max="100" placeholder="0" />
+            </label>
+          </div>
+          <p id="form-error" class="error-text" aria-live="polite"></p>
+          <div class="form-actions">
+            <button type="button" class="btn-cancel" onclick="showPage('games')">Cancel</button>
+            <button type="submit" class="btn-primary">Add Game</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    function showPage(name) {
+      var pages = document.querySelectorAll('.page');
+      for (var i = 0; i < pages.length; i++) {
+        pages[i].classList.add('hidden');
+      }
+      document.getElementById('page-' + name).classList.remove('hidden');
+
+      var navItems = document.querySelectorAll('.nav-item');
+      for (var j = 0; j < navItems.length; j++) {
+        navItems[j].classList.remove('active');
+      }
+      var activeNav = document.getElementById('nav-' + name);
+      if (activeNav) activeNav.classList.add('active');
+    }
+
+    showPage('dashboard');
+  </script>
 
   <script src="app.js"></script>
+
 </body>
 </html>
