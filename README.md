@@ -21,9 +21,9 @@ A browser-based game progress tracker that allows users to create a personal gam
 
 ## Project Structure
 code/
-index.html    # App structure and page layout
-styles.css    # Theme and responsive styles
-app.js        # All application logic
+├── index.html    # App structure and page layout
+├── styles.css    # Theme and responsive styles
+└── app.js        # All application logic
 
 ## Tech Stack
 - HTML
